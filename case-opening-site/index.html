@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-    <!-- Loader (pokazuje się od razu, ukrywa po załadowaniu danych z API) -->
+    <!-- Loader -->
     <div class="loader-overlay" id="loaderOverlay">
         <div class="loader-spinner"></div>
         <div class="loader-text">Ładowanie skinów...</div>
@@ -48,15 +48,15 @@
             <ul class="nav-links">
                 <li><a href="#cases" class="active">Skrzynki</a></li>
                 <li><a href="#upgrade">Upgrade</a></li>
-                <li><a href="#battles">Bitwy</a></li>
-                <li><a href="#contracts">Kontrakty</a></li>
-                <li><a href="#daily">Daily</a></li>
+                <li><a href="#featured">Skiny</a></li>
+                <li><a href="#how">Jak grać</a></li>
             </ul>
 
             <div class="nav-actions">
-                <div class="balance">
+                <div class="balance" title="Kliknij aby doładować">
                     <span class="balance-icon">💎</span>
-                    <span class="balance-amount">2,450.00</span>
+                    <span class="balance-amount">100.00</span>
+                    <span style="font-size: 12px; color: var(--text-muted); margin-left: 4px;">zł</span>
                 </div>
                 <button class="btn-deposit">
                     <span>+ Doładuj</span>
@@ -68,7 +68,7 @@
         </div>
     </nav>
 
-    <!-- Live Drops Strip -->
+    <!-- Live Drops -->
     <div class="live-drops">
         <div class="live-label">
             <span class="live-dot"></span>
@@ -83,7 +83,7 @@
                 </div>
             </div>
             <div class="drop-card rarity-classified">
-                <div class="drop-img">🔫</div>
+                <div class="drop-img">🎯</div>
                 <div class="drop-info">
                     <div class="drop-name">AWP | Asiimov</div>
                     <div class="drop-user">@SnipeMaster</div>
@@ -97,7 +97,7 @@
                 </div>
             </div>
             <div class="drop-card rarity-covert">
-                <div class="drop-img">🗡️</div>
+                <div class="drop-img">🔪</div>
                 <div class="drop-info">
                     <div class="drop-name">Butterfly | Fade</div>
                     <div class="drop-user">@LuckyOne</div>
@@ -134,7 +134,7 @@
         </div>
     </div>
 
-    <!-- Hero Section -->
+    <!-- Hero -->
     <section class="hero">
         <div class="hero-content">
             <div class="hero-badge">
@@ -146,7 +146,7 @@
                 Wygrywaj <span class="gradient-text-pink">Najlepsze Skiny</span>
             </h1>
             <p class="hero-subtitle">
-                Tysiące skrzynek, miliony skinów. Dołącz do społeczności, otwieraj skrzynki i zdobywaj rzadkie przedmioty z całego świata CS:GO.
+                Otrzymaj <strong style="color: var(--purple-light);">100 zł na start</strong> i otwieraj skrzynki ze skinami CS:GO. Co 15 minut darmowe doładowanie!
             </p>
             <div class="hero-buttons">
                 <button class="btn-primary">
@@ -181,7 +181,7 @@
                 </div>
                 <div class="floating-item item-1">💎</div>
                 <div class="floating-item item-2">🔪</div>
-                <div class="floating-item item-3">🔫</div>
+                <div class="floating-item item-3">🎯</div>
                 <div class="floating-item item-4">⭐</div>
             </div>
         </div>
@@ -191,29 +191,33 @@
     <section class="categories">
         <div class="container">
             <div class="category-tabs">
-                <button class="cat-tab active">
+                <button class="cat-tab active" data-category="popular">
                     <span class="cat-icon">🔥</span>
                     <span>Popularne</span>
                 </button>
-                <button class="cat-tab">
+                <button class="cat-tab" data-category="premium">
                     <span class="cat-icon">⭐</span>
                     <span>Premium</span>
                 </button>
-                <button class="cat-tab">
+                <button class="cat-tab" data-category="new">
                     <span class="cat-icon">🆕</span>
                     <span>Nowe</span>
                 </button>
-                <button class="cat-tab">
+                <button class="cat-tab" data-category="cheap">
                     <span class="cat-icon">💰</span>
                     <span>Tanie</span>
                 </button>
-                <button class="cat-tab">
+                <button class="cat-tab" data-category="knives">
                     <span class="cat-icon">🔪</span>
                     <span>Noże</span>
                 </button>
-                <button class="cat-tab">
+                <button class="cat-tab" data-category="gloves">
                     <span class="cat-icon">🧤</span>
                     <span>Rękawiczki</span>
+                </button>
+                <button class="cat-tab" data-category="all">
+                    <span class="cat-icon">📦</span>
+                    <span>Wszystkie</span>
                 </button>
             </div>
         </div>
@@ -228,15 +232,63 @@
                 </h2>
                 <p class="section-subtitle">Wybierz skrzynkę i wygraj wyjątkowe skiny</p>
             </div>
+            <div class="cases-grid" id="casesGrid"></div>
+        </div>
+    </section>
 
-            <div class="cases-grid" id="casesGrid">
-                <!-- Cases will be injected here -->
+    <!-- UPGRADE Section -->
+    <section class="upgrade-section" id="upgrade">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">
+                    Skin <span class="gradient-text-pink">Upgrade</span>
+                </h2>
+                <p class="section-subtitle">Wybierz skin z ekwipunku i ulepsz go na coś lepszego</p>
+            </div>
+
+            <div class="upgrade-arena">
+                <div class="upgrade-side">
+                    <div class="upgrade-side-label">📦 Twój przedmiot</div>
+                    <div class="upgrade-box" id="upgradeFromBox">
+                        <div class="upgrade-placeholder">Wybierz przedmiot z ekwipunku</div>
+                    </div>
+                </div>
+
+                <div class="upgrade-center">
+                    <div class="upgrade-arrow">→</div>
+                    <div class="upgrade-chance-label">Szansa</div>
+                    <div class="upgrade-chance" id="upgradeChance">0%</div>
+                    <button class="btn-primary" id="upgradeBtn" disabled>
+                        <span>⚡ Upgrade</span>
+                    </button>
+                </div>
+
+                <div class="upgrade-side">
+                    <div class="upgrade-side-label">🎯 Cel</div>
+                    <div class="upgrade-box" id="upgradeToBox">
+                        <div class="upgrade-placeholder">Wybierz cel upgrade</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="upgrade-grids">
+                <div class="upgrade-list-section">
+                    <h3 class="upgrade-list-title">Twój ekwipunek</h3>
+                    <div class="upgrade-list" id="upgradeFromList"></div>
+                </div>
+
+                <div class="upgrade-list-section">
+                    <h3 class="upgrade-list-title">Możliwe cele upgrade</h3>
+                    <div class="upgrade-list" id="upgradeToList">
+                        <div class="upgrade-empty"><small>Najpierw wybierz przedmiot z ekwipunku po lewej</small></div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
 
     <!-- Featured Items -->
-    <section class="featured-section">
+    <section class="featured-section" id="featured">
         <div class="container">
             <div class="section-header">
                 <h2 class="section-title">
@@ -244,45 +296,40 @@
                 </h2>
                 <p class="section-subtitle">Najczęściej wygrywane skiny w tym tygodniu</p>
             </div>
-
-            <div class="featured-grid" id="featuredGrid">
-                <!-- Items will be injected here -->
-            </div>
+            <div class="featured-grid" id="featuredGrid"></div>
         </div>
     </section>
 
     <!-- How it works -->
-    <section class="how-section">
+    <section class="how-section" id="how">
         <div class="container">
             <div class="section-header">
-                <h2 class="section-title">
-                    Jak to <span class="gradient-text">Działa</span>?
-                </h2>
+                <h2 class="section-title">Jak to <span class="gradient-text">Działa</span>?</h2>
             </div>
             <div class="steps">
                 <div class="step">
                     <div class="step-number gradient-text">01</div>
                     <div class="step-icon">💳</div>
-                    <h3>Doładuj konto</h3>
-                    <p>Wybierz wygodną metodę płatności i doładuj swoje konto w kilka sekund.</p>
+                    <h3>Otrzymaj 100 zł</h3>
+                    <p>Każdy nowy gracz dostaje 100 zł na start. Co 15 minut darmowe +50 zł.</p>
                 </div>
                 <div class="step">
                     <div class="step-number gradient-text">02</div>
                     <div class="step-icon">📦</div>
                     <h3>Wybierz skrzynkę</h3>
-                    <p>Setki skrzynek w różnych cenach. Każda zawiera unikatowe skiny.</p>
+                    <p>12 skrzynek w różnych cenach. Każda zawiera unikatowe skiny ze Steam CDN.</p>
                 </div>
                 <div class="step">
                     <div class="step-number gradient-text">03</div>
                     <div class="step-icon">🎁</div>
                     <h3>Otwórz i wygraj</h3>
-                    <p>Otwórz skrzynkę i odbierz swój skin lub wymień na środki.</p>
+                    <p>Otwórz skrzynkę i odbierz swój skin lub sprzedaj go za realną cenę.</p>
                 </div>
                 <div class="step">
                     <div class="step-number gradient-text">04</div>
-                    <div class="step-icon">💸</div>
-                    <h3>Wypłać lub wymień</h3>
-                    <p>Skiny przesyłamy bezpośrednio na Twój ekwipunek Steam.</p>
+                    <div class="step-icon">⚡</div>
+                    <h3>Upgrade skinów</h3>
+                    <p>Ulepszaj swoje skiny na droższe — zaryzykuj dla większej nagrody!</p>
                 </div>
             </div>
         </div>
@@ -314,10 +361,10 @@
                 <div class="footer-col">
                     <h4>Platforma</h4>
                     <ul>
-                        <li><a href="#">Skrzynki</a></li>
-                        <li><a href="#">Upgrade</a></li>
-                        <li><a href="#">Bitwy</a></li>
-                        <li><a href="#">Kontrakty</a></li>
+                        <li><a href="#cases">Skrzynki</a></li>
+                        <li><a href="#upgrade">Upgrade</a></li>
+                        <li><a href="#featured">Skiny</a></li>
+                        <li><a href="#how">Jak grać</a></li>
                     </ul>
                 </div>
                 <div class="footer-col">

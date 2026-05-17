@@ -1,154 +1,138 @@
 /**
  * PurpleCase - Dane skrzynek i przedmiotów
  *
- * OBRAZKI SKINÓW:
- * Używamy darmowego API ByMykel CSGO-API, które dostarcza obrazki ze Steam CDN.
- * - API: https://bymykel.github.io/CSGO-API/api/en/skins.json (darmowe, statyczne JSON)
- * - Obrazy: https://community.cloudflare.steamstatic.com/economy/image/{hash}
+ * Strategia ładowania obrazków skinów:
+ * 1) Próbujemy pobrać `crates.json` z ByMykel CSGO-API (mniejszy ~2MB plik
+ *    który zawiera listę skrzynek WRAZ z obrazkami skinów wewnątrz `contains`)
+ * 2) Jeśli się nie uda - używamy fallback emoji
  *
- * Dane są pobierane dynamicznie przy starcie aplikacji (po stronie przeglądarki).
- * W razie braku połączenia, używamy emoji jako fallback.
+ * Endpoint: https://bymykel.github.io/CSGO-API/api/en/crates.json
+ * Struktura każdej skrzynki: { id, name, image, contains: [{id, name, image, rarity}] }
  */
 
-// Endpointy API
-const API = {
-    skins: 'https://bymykel.github.io/CSGO-API/api/en/skins.json',
-    crates: 'https://bymykel.github.io/CSGO-API/api/en/crates.json'
-};
-
-// Konfiguracja skrzynek (kuratorowane - 12 najpopularniejszych)
-// Pasują do skrzynek dostępnych w API ByMykel
+// ==========================================================================
+// KONFIGURACJA SKRZYNEK
+// Mapuje nazwy "biznesowe" (które chcemy pokazać) do nazw z gry CS
+// + ustawia ceny, kategorie, gradienty
+// ==========================================================================
 const CASES_CONFIG = [
     {
-        id: 'crate-4001',
-        name: 'Dragon Lore',
-        apiName: 'Operation Bravo Case',
+        id: 'dragon_hoard',
+        displayName: 'Dragon Hoard',
+        // Nazwa skrzynki w API ByMykel (musi pasować dokładnie)
+        gameNames: ['Operation Bravo Case', 'eSports 2014 Summer Case'],
         emoji: '🐉',
-        price: 249.99,
-        items: 47,
-        badge: 'HOT',
-        gradient: 'linear-gradient(135deg, #ef4444 0%, #f97316 100%)'
-    },
-    {
-        id: 'crate-4904',
-        name: 'Phoenix Rising',
-        apiName: 'Operation Phoenix Weapon Case',
-        emoji: '🔥',
+        gradient: 'linear-gradient(135deg, #ef4444 0%, #f97316 100%)',
         price: 89.99,
-        items: 32,
-        badge: 'NEW',
-        gradient: 'linear-gradient(135deg, #f97316 0%, #eab308 100%)'
+        badge: 'HOT',
+        categories: ['popular', 'premium']
     },
     {
-        id: 'crate-4906',
-        name: 'Cosmic Vault',
-        apiName: 'Huntsman Weapon Case',
-        emoji: '🌌',
-        price: 149.99,
-        items: 41,
-        badge: 'TOP',
-        gradient: 'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%)'
-    },
-    {
-        id: 'crate-4035',
-        name: 'Shadow Realm',
-        apiName: 'Shadow Case',
-        emoji: '👻',
-        price: 59.99,
-        items: 28,
-        gradient: 'linear-gradient(135deg, #1e1b4b 0%, #581c87 100%)'
-    },
-    {
-        id: 'crate-4669',
-        name: 'Royal Treasury',
-        apiName: 'Chroma Case',
-        emoji: '👑',
-        price: 199.99,
-        items: 38,
-        badge: 'VIP',
-        gradient: 'linear-gradient(135deg, #eab308 0%, #f59e0b 100%)'
-    },
-    {
-        id: 'crate-4670',
-        name: 'Neon Dreams',
-        apiName: 'Chroma 2 Case',
-        emoji: '💜',
-        price: 39.99,
-        items: 25,
-        gradient: 'linear-gradient(135deg, #d946ef 0%, #ec4899 100%)'
-    },
-    {
-        id: 'crate-4675',
-        name: 'Ice Storm',
-        apiName: 'Glove Case',
-        emoji: '❄️',
-        price: 79.99,
-        items: 30,
-        gradient: 'linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%)'
-    },
-    {
-        id: 'crate-4678',
-        name: 'Mystic Forest',
-        apiName: 'Spectrum Case',
-        emoji: '🌿',
+        id: 'phoenix_blaze',
+        displayName: 'Phoenix Blaze',
+        gameNames: ['Operation Phoenix Weapon Case'],
+        emoji: '🔥',
+        gradient: 'linear-gradient(135deg, #f97316 0%, #eab308 100%)',
         price: 49.99,
-        items: 26,
-        gradient: 'linear-gradient(135deg, #10b981 0%, #06b6d4 100%)'
+        badge: 'NEW',
+        categories: ['popular', 'new']
     },
     {
-        id: 'crate-4684',
-        name: 'Demon Lord',
-        apiName: 'Clutch Case',
-        emoji: '😈',
-        price: 299.99,
-        items: 50,
-        badge: 'LEGEND',
-        gradient: 'linear-gradient(135deg, #dc2626 0%, #7c2d12 100%)'
+        id: 'cosmic_vault',
+        displayName: 'Cosmic Vault',
+        gameNames: ['Huntsman Weapon Case', 'Operation Vanguard Weapon Case'],
+        emoji: '🌌',
+        gradient: 'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%)',
+        price: 79.99,
+        badge: 'TOP',
+        categories: ['popular', 'premium']
     },
     {
-        id: 'crate-4694',
-        name: 'Galaxy Edge',
-        apiName: 'Prisma Case',
-        emoji: '🚀',
-        price: 119.99,
-        items: 35,
-        gradient: 'linear-gradient(135deg, #6366f1 0%, #ec4899 100%)'
+        id: 'shadow_realm',
+        displayName: 'Shadow Realm',
+        gameNames: ['Shadow Case', 'Falchion Case'],
+        emoji: '👻',
+        gradient: 'linear-gradient(135deg, #1e1b4b 0%, #581c87 100%)',
+        price: 14.99,
+        categories: ['cheap', 'new']
     },
     {
-        id: 'crate-4697',
-        name: 'Thunder Strike',
-        apiName: 'CS20 Case',
-        emoji: '⚡',
-        price: 69.99,
-        items: 29,
-        gradient: 'linear-gradient(135deg, #facc15 0%, #a855f7 100%)'
+        id: 'royal_treasury',
+        displayName: 'Royal Treasury',
+        gameNames: ['Chroma Case', 'Chroma 2 Case', 'Chroma 3 Case'],
+        emoji: '👑',
+        gradient: 'linear-gradient(135deg, #eab308 0%, #f59e0b 100%)',
+        price: 149.99,
+        badge: 'VIP',
+        categories: ['premium']
     },
     {
-        id: 'crate-4700',
-        name: 'Midnight Rose',
-        apiName: 'Fracture Case',
-        emoji: '🌹',
+        id: 'neon_dreams',
+        displayName: 'Neon Dreams',
+        gameNames: ['Spectrum Case', 'Spectrum 2 Case'],
+        emoji: '💜',
+        gradient: 'linear-gradient(135deg, #d946ef 0%, #ec4899 100%)',
+        price: 9.99,
+        categories: ['cheap', 'popular']
+    },
+    {
+        id: 'ice_storm',
+        displayName: 'Ice Storm',
+        gameNames: ['Operation Hydra Case', 'Glove Case'],
+        emoji: '❄️',
+        gradient: 'linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%)',
+        price: 39.99,
+        categories: ['popular', 'gloves']
+    },
+    {
+        id: 'glove_box',
+        displayName: 'Glove Box',
+        gameNames: ['Glove Case', 'Clutch Case'],
+        emoji: '🧤',
+        gradient: 'linear-gradient(135deg, #10b981 0%, #06b6d4 100%)',
         price: 99.99,
-        items: 33,
         badge: 'RARE',
-        gradient: 'linear-gradient(135deg, #be123c 0%, #831843 100%)'
+        categories: ['gloves', 'premium']
+    },
+    {
+        id: 'demon_lord',
+        displayName: 'Demon Lord',
+        gameNames: ['Operation Riptide Case', 'Snakebite Case'],
+        emoji: '😈',
+        gradient: 'linear-gradient(135deg, #dc2626 0%, #7c2d12 100%)',
+        price: 199.99,
+        badge: 'LEGEND',
+        categories: ['premium']
+    },
+    {
+        id: 'knife_chest',
+        displayName: 'Knife Chest',
+        gameNames: ['Operation Broken Fang Case', 'Recoil Case'],
+        emoji: '🔪',
+        gradient: 'linear-gradient(135deg, #6366f1 0%, #ec4899 100%)',
+        price: 129.99,
+        badge: 'NEW',
+        categories: ['knives', 'new', 'premium']
+    },
+    {
+        id: 'starter_pack',
+        displayName: 'Starter Pack',
+        gameNames: ['CS:GO Weapon Case', 'CS20 Case'],
+        emoji: '🎁',
+        gradient: 'linear-gradient(135deg, #facc15 0%, #a855f7 100%)',
+        price: 4.99,
+        badge: 'CHEAP',
+        categories: ['cheap', 'new']
+    },
+    {
+        id: 'galaxy_edge',
+        displayName: 'Galaxy Edge',
+        gameNames: ['Prisma Case', 'Prisma 2 Case'],
+        emoji: '🚀',
+        gradient: 'linear-gradient(135deg, #6366f1 0%, #ec4899 100%)',
+        price: 59.99,
+        categories: ['popular']
     }
-];
-
-// Fallback dane (gdy API nie odpowie)
-const FALLBACK_ITEMS = [
-    { name: 'AWP | Dragon Lore', icon: '🔫', image: null, rarity: 'covert', price: 4500.00 },
-    { name: 'Karambit | Doppler', icon: '🔪', image: null, rarity: 'knife', price: 1850.00 },
-    { name: 'AK-47 | Fire Serpent', icon: '🔫', image: null, rarity: 'covert', price: 980.50 },
-    { name: 'M4A4 | Howl', icon: '🔫', image: null, rarity: 'covert', price: 2150.00 },
-    { name: 'Butterfly Knife | Fade', icon: '🗡️', image: null, rarity: 'knife', price: 1620.00 },
-    { name: 'AWP | Asiimov', icon: '🔫', image: null, rarity: 'classified', price: 145.99 },
-    { name: 'Bayonet | Tiger Tooth', icon: '🔪', image: null, rarity: 'knife', price: 890.00 },
-    { name: 'Glock-18 | Fade', icon: '🔫', image: null, rarity: 'restricted', price: 320.00 },
-    { name: 'AK-47 | Vulcan', icon: '🔫', image: null, rarity: 'classified', price: 425.00 },
-    { name: 'USP-S | Kill Confirmed', icon: '🔫', image: null, rarity: 'classified', price: 89.99 },
-    { name: 'Desert Eagle | Blaze', icon: '🔫', image: null, rarity: 'restricted', price: 230.00 },
-    { name: 'M4A1-S | Hyper Beast', icon: '🔫', image: null, rarity: 'classified', price: 75.50 }
 ];
 
 // Mapowanie nazw rzadkości API → nasze klasy CSS
@@ -160,8 +144,7 @@ const RARITY_MAP = {
     'Classified': 'classified',
     'Covert': 'covert',
     'Extraordinary': 'knife',
-    'Contraband': 'covert',
-    '★': 'knife'
+    'Contraband': 'covert'
 };
 
 // Realistyczne ceny dla rzadkości (PLN)
@@ -175,7 +158,7 @@ const PRICE_RANGES = {
     'knife': [500, 20000]
 };
 
-// Globalne dane - wypełniane dynamicznie
+// Globalne dane wypełniane dynamicznie
 let CASES = [];
 let ITEMS = [];
 
@@ -190,176 +173,209 @@ const RARITY_NAMES = {
 };
 
 // ==========================================================================
-// Pobieranie danych z API
+// FALLBACK - emoji + nazwy (gdy API niedostępne)
 // ==========================================================================
+const FALLBACK_ITEMS_TEMPLATE = [
+    { name: 'AWP | Dragon Lore', icon: '🎯', rarity: 'covert', basePrice: 4500 },
+    { name: '★ Karambit | Doppler', icon: '🔪', rarity: 'knife', basePrice: 1850 },
+    { name: 'AK-47 | Fire Serpent', icon: '🔫', rarity: 'covert', basePrice: 980 },
+    { name: 'M4A4 | Howl', icon: '🔫', rarity: 'covert', basePrice: 2150 },
+    { name: '★ Butterfly Knife | Fade', icon: '🔪', rarity: 'knife', basePrice: 1620 },
+    { name: 'AWP | Asiimov', icon: '🎯', rarity: 'classified', basePrice: 145 },
+    { name: '★ Bayonet | Tiger Tooth', icon: '🔪', rarity: 'knife', basePrice: 890 },
+    { name: 'Glock-18 | Fade', icon: '🔫', rarity: 'restricted', basePrice: 320 },
+    { name: 'AK-47 | Vulcan', icon: '🔫', rarity: 'classified', basePrice: 425 },
+    { name: 'USP-S | Kill Confirmed', icon: '🔫', rarity: 'classified', basePrice: 89 },
+    { name: 'Desert Eagle | Blaze', icon: '🔫', rarity: 'restricted', basePrice: 230 },
+    { name: 'M4A1-S | Hyper Beast', icon: '🔫', rarity: 'classified', basePrice: 75 }
+];
+
+function buildFallbackItems() {
+    return FALLBACK_ITEMS_TEMPLATE.map((item, idx) => ({
+        id: `fallback_${idx}`,
+        name: item.name,
+        icon: item.icon,
+        image: null,
+        rarity: item.rarity,
+        price: +(item.basePrice * (0.9 + Math.random() * 0.2)).toFixed(2)
+    }));
+}
+
+// ==========================================================================
+// HELPERY
+// ==========================================================================
+function getEmojiForWeapon(weaponName) {
+    const name = (weaponName || '').toLowerCase();
+    if (name.includes('knife') || name.includes('bayonet') || name.includes('karambit') ||
+        name.includes('butterfly') || name.includes('huntsman') || name.includes('talon') ||
+        name.includes('m9') || name.includes('navaja') || name.includes('falchion') ||
+        name.includes('shadow') || name.includes('stiletto') || name.includes('ursus') ||
+        name.includes('paracord') || name.includes('survival')) return '🔪';
+    if (name.includes('glove')) return '🧤';
+    if (name.includes('awp') || name.includes('ssg')) return '🎯';
+    if (name.includes('grenade') || name.includes('molotov') || name.includes('flashbang')) return '💣';
+    return '🔫';
+}
+
+function fetchWithTimeout(url, timeoutMs = 12000) {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+    return fetch(url, { signal: controller.signal })
+        .then(res => {
+            clearTimeout(timeoutId);
+            return res;
+        })
+        .catch(err => {
+            clearTimeout(timeoutId);
+            throw err;
+        });
+}
 
 /**
  * Mapuje skin z API na nasz format
  */
-function mapApiSkin(apiSkin) {
-    const rarityName = apiSkin.rarity?.name || apiSkin.rarity || '';
+function mapApiSkin(apiItem) {
+    const rarityName = (apiItem.rarity && apiItem.rarity.name) || apiItem.rarity || '';
     const rarity = RARITY_MAP[rarityName] || 'milspec';
-
-    // Generuj realistyczną cenę na bazie rzadkości
     const range = PRICE_RANGES[rarity] || [10, 100];
     const price = +(range[0] + Math.random() * (range[1] - range[0])).toFixed(2);
 
     return {
-        id: apiSkin.id,
-        name: apiSkin.name || 'Unknown Skin',
-        image: apiSkin.image, // URL ze Steam CDN
+        id: apiItem.id || apiItem.name,
+        name: apiItem.name || 'Unknown Skin',
+        image: apiItem.image || null,
         rarity,
         price,
-        icon: getEmojiForWeapon(apiSkin.weapon?.name || apiSkin.name)
+        icon: getEmojiForWeapon(apiItem.name)
     };
 }
 
-/**
- * Zwraca emoji jako fallback dla broni
- */
-function getEmojiForWeapon(weaponName) {
-    const name = (weaponName || '').toLowerCase();
-    if (name.includes('knife') || name.includes('bayonet') || name.includes('karambit')) return '🔪';
-    if (name.includes('butterfly') || name.includes('huntsman')) return '🗡️';
-    if (name.includes('awp') || name.includes('ssg')) return '🎯';
-    if (name.includes('glove')) return '🧤';
-    if (name.includes('grenade') || name.includes('molotov')) return '💣';
-    return '🔫';
-}
-
-/**
- * Fetch z timeoutem - jeśli API nie odpowie w X sekund, rzuca błąd
- */
-async function fetchWithTimeout(url, timeoutMs = 8000) {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
-    try {
-        const res = await fetch(url, { signal: controller.signal });
-        clearTimeout(timeoutId);
-        return res;
-    } catch (err) {
-        clearTimeout(timeoutId);
-        if (err.name === 'AbortError') {
-            throw new Error(`Timeout po ${timeoutMs}ms: ${url}`);
-        }
-        throw err;
-    }
-}
-
-/**
- * Używa fallback danych
- */
-function useFallbackData() {
-    ITEMS = FALLBACK_ITEMS;
-    CASES = CASES_CONFIG.map(c => ({ ...c, pool: ITEMS }));
-}
-
-/**
- * Ładuje dane z API ByMykel - zawsze zwraca w ograniczonym czasie
- */
+// ==========================================================================
+// GŁÓWNE: Załaduj dane z API (z fallback)
+// ==========================================================================
 async function loadGameData() {
-    try {
-        console.log('[PurpleCase] 🔄 Pobieranie skinów z API...');
-        const startTime = Date.now();
+    const startTime = Date.now();
 
-        // Pobierz skiny i skrzynki równolegle z timeoutem
-        const [skinsRes, cratesRes] = await Promise.all([
-            fetchWithTimeout(API.skins, 10000),
-            fetchWithTimeout(API.crates, 10000)
-        ]);
+    // Lista źródeł - próbujemy po kolei aż któreś zadziała
+    const sources = [
+        'https://bymykel.github.io/CSGO-API/api/en/crates.json',
+        'https://raw.githubusercontent.com/ByMykel/CSGO-API/main/public/api/en/crates.json'
+    ];
 
-        console.log(`[PurpleCase] HTTP: skins=${skinsRes.status}, crates=${cratesRes.status} (${Date.now() - startTime}ms)`);
+    let allCrates = null;
+    let lastErr = null;
 
-        if (!skinsRes.ok || !cratesRes.ok) {
-            throw new Error(`HTTP error: skins=${skinsRes.status}, crates=${cratesRes.status}`);
+    for (const url of sources) {
+        try {
+            console.log(`[PurpleCase] 🔄 Próbuję: ${url}`);
+            const res = await fetchWithTimeout(url, 10000);
+            if (!res.ok) {
+                lastErr = new Error(`HTTP ${res.status}`);
+                continue;
+            }
+            allCrates = await res.json();
+            console.log(`[PurpleCase] ✅ Pobrano ${allCrates.length} skrzynek (${Date.now() - startTime}ms)`);
+            break;
+        } catch (err) {
+            lastErr = err;
+            console.warn(`[PurpleCase] Źródło niedostępne: ${err.message}`);
         }
+    }
 
-        const allSkins = await skinsRes.json();
-        const allCrates = await cratesRes.json();
+    if (!allCrates) {
+        console.warn('[PurpleCase] ⚠️ Wszystkie źródła API niedostępne, używam fallback:', lastErr && lastErr.message);
+        useFallbackData();
+        return false;
+    }
 
-        console.log(`[PurpleCase] ✅ Pobrano ${allSkins.length} skinów i ${allCrates.length} skrzynek (${Date.now() - startTime}ms)`);
-
-        // Filtruj tylko skiny z obrazkami (oszczędność RAM)
-        const skinsWithImages = allSkins.filter(s => s && s.image);
-
-        // ITEMS - 12 popularnych skinów
-        const popularSkins = pickPopularItems(skinsWithImages);
-        ITEMS = popularSkins.map(mapApiSkin);
-
-        // CASES - dopasuj konfiguracje do prawdziwych skrzynek
+    try {
+        // Buduj nasze CASES z konfiguracji + danych API
         CASES = CASES_CONFIG.map(config => {
-            const apiCrate = allCrates.find(c => c.name === config.apiName);
+            // Znajdź pierwszą pasującą skrzynkę z API
+            let apiCrate = null;
+            for (const gameName of config.gameNames) {
+                apiCrate = allCrates.find(c => c.name === gameName);
+                if (apiCrate) break;
+            }
+
+            // Buduj pulę przedmiotów
+            let pool = [];
+            if (apiCrate && apiCrate.contains && apiCrate.contains.length > 0) {
+                pool = apiCrate.contains.map(mapApiSkin);
+            }
+            // Dodaj rare items (knives/gloves) z API jeśli istnieją
+            if (apiCrate && apiCrate.contains_rare && apiCrate.contains_rare.length > 0) {
+                pool = pool.concat(apiCrate.contains_rare.map(item => ({
+                    ...mapApiSkin(item),
+                    rarity: 'knife' // Wszystkie rare to nóż lub rękawica
+                })));
+            }
+
+            // Jeśli pula jest pusta - dodaj fallback
+            if (pool.length === 0) {
+                pool = buildFallbackItems();
+            }
+
             return {
-                ...config,
-                image: apiCrate?.image || null,
-                pool: getPoolForCrate(apiCrate, allSkins) || ITEMS
+                id: config.id,
+                name: config.displayName,
+                emoji: config.emoji,
+                image: (apiCrate && apiCrate.image) || null,
+                gradient: config.gradient,
+                price: config.price,
+                badge: config.badge,
+                categories: config.categories,
+                items: pool.length,
+                pool
             };
         });
 
-        console.log(`[PurpleCase] ✨ Gotowe (${Date.now() - startTime}ms)`);
+        // Buduj listę najpopularniejszych przedmiotów (16 sztuk)
+        // Bierzemy najlepsze covert/classified/knife z różnych skrzynek
+        const allItemsFromCases = CASES.flatMap(c => c.pool);
+        const seenNames = new Set();
+        const popular = [];
+
+        // Priorytet: knife → covert → classified
+        for (const rarity of ['knife', 'covert', 'classified', 'restricted']) {
+            for (const item of allItemsFromCases) {
+                if (popular.length >= 12) break;
+                if (item.rarity !== rarity) continue;
+                if (seenNames.has(item.name)) continue;
+                seenNames.add(item.name);
+                popular.push(item);
+            }
+            if (popular.length >= 12) break;
+        }
+
+        ITEMS = popular.length > 0 ? popular : buildFallbackItems();
+
+        console.log(`[PurpleCase] ✨ Gotowe: ${CASES.length} skrzynek, ${ITEMS.length} przedmiotów (${Date.now() - startTime}ms)`);
+        console.log(`[PurpleCase] Przykładowy obrazek:`, ITEMS[0] && ITEMS[0].image);
+
         return true;
     } catch (err) {
-        console.warn('[PurpleCase] ⚠️ Nie udało się pobrać danych z API, używam fallback:', err.message);
+        console.warn('[PurpleCase] ⚠️ API niedostępne, używam fallback:', err.message);
         useFallbackData();
         return false;
     }
 }
 
 /**
- * Wybiera 16 reprezentatywnych skinów do sekcji "Najpopularniejsze"
+ * Awaryjne dane gdy API nie odpowiada - emoji ale działa zawsze
  */
-function pickPopularItems(skins) {
-    const targets = [
-        'AWP | Dragon Lore',
-        'AWP | Asiimov',
-        'AK-47 | Fire Serpent',
-        'AK-47 | Vulcan',
-        'AK-47 | Redline',
-        'M4A4 | Howl',
-        'M4A4 | Asiimov',
-        'M4A1-S | Hyper Beast',
-        'USP-S | Kill Confirmed',
-        'Desert Eagle | Blaze',
-        'Glock-18 | Fade',
-        '★ Karambit | Doppler',
-        '★ Butterfly Knife | Fade',
-        '★ Bayonet | Tiger Tooth',
-        '★ M9 Bayonet | Marble Fade',
-        '★ Talon Knife | Slaughter'
-    ];
-
-    const found = [];
-    for (const target of targets) {
-        const skin = skins.find(s =>
-            s.name && s.name.toLowerCase().includes(target.toLowerCase().split('|')[1]?.trim() || '') &&
-            s.name.toLowerCase().includes(target.toLowerCase().split('|')[0]?.trim().replace('★', '').trim() || '')
-        );
-        if (skin && !found.find(f => f.id === skin.id)) found.push(skin);
-    }
-
-    // Dopełnij losowymi covert/classified jeśli mało
-    if (found.length < 12) {
-        const coverts = skins.filter(s =>
-            s.rarity?.name === 'Covert' || s.rarity?.name === 'Classified'
-        );
-        while (found.length < 12 && coverts.length > 0) {
-            const idx = Math.floor(Math.random() * coverts.length);
-            const skin = coverts.splice(idx, 1)[0];
-            if (!found.find(f => f.id === skin.id)) found.push(skin);
-        }
-    }
-
-    return found.slice(0, 12);
-}
-
-/**
- * Pobiera pulę przedmiotów dla danej skrzynki
- */
-function getPoolForCrate(apiCrate, allSkins) {
-    if (!apiCrate || !apiCrate.contains || apiCrate.contains.length === 0) return null;
-
-    return apiCrate.contains
-        .map(item => allSkins.find(s => s.id === item.id))
-        .filter(Boolean)
-        .map(mapApiSkin);
+function useFallbackData() {
+    ITEMS = buildFallbackItems();
+    CASES = CASES_CONFIG.map(config => ({
+        id: config.id,
+        name: config.displayName,
+        emoji: config.emoji,
+        image: null,
+        gradient: config.gradient,
+        price: config.price,
+        badge: config.badge,
+        categories: config.categories,
+        items: ITEMS.length,
+        pool: buildFallbackItems()
+    }));
 }
