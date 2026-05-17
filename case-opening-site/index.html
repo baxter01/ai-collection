@@ -10,6 +10,13 @@
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
+    <!-- Loader (pokazuje się od razu, ukrywa po załadowaniu danych z API) -->
+    <div class="loader-overlay" id="loaderOverlay">
+        <div class="loader-spinner"></div>
+        <div class="loader-text">Ładowanie skinów...</div>
+        <div class="loader-subtext">Pobieram dane ze Steam CDN</div>
+    </div>
+
     <!-- Animated Background -->
     <div class="bg-effects">
         <div class="bg-orb bg-orb-1"></div>
