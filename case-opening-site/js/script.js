@@ -368,15 +368,43 @@ function setupInfiniteDrops() {
 document.addEventListener('DOMContentLoaded', async () => {
     showLoader();
 
-    // Pobierz dane z ByMykel CSGO-API (Steam CDN images)
-    await loadGameData();
+    try {
+        // Pobierz dane z ByMykel CSGO-API (Steam CDN images)
+        // loadGameData ma własny try/catch + timeout, więc nie powinno rzucić,
+        // ale zabezpieczamy się dodatkowo
+        await loadGameData();
+    } catch (err) {
+        console.error('[PurpleCase] Critical error w loadGameData:', err);
+        // Upewnij się, że są jakieś dane
+        if (!Array.isArray(CASES) || CASES.length === 0) {
+            useFallbackData();
+        }
+    }
 
-    // Wyrenderuj stronę z prawdziwymi obrazkami
-    renderCases();
-    renderItems();
-    initCategoryTabs();
-    initHeroCTA();
-    setupInfiniteDrops();
-
-    hideLoader();
+    try {
+        // Wyrenderuj stronę
+        renderCases();
+        renderItems();
+        initCategoryTabs();
+        initHeroCTA();
+        setupInfiniteDrops();
+    } catch (err) {
+        console.error('[PurpleCase] Błąd renderowania:', err);
+    } finally {
+        // ZAWSZE schowaj loader, niezależnie od błędów
+        hideLoader();
+    }
 });
+
+// Twardy bezpiecznik: nawet jeśli coś totalnie się wysypie, schowaj loader po 15s
+setTimeout(() => {
+    const loader = document.getElementById('loaderOverlay');
+    if (loader && !loader.classList.contains('hidden')) {
+        console.warn('[PurpleCase] Loader timeout - wymuszam schowanie po 15s');
+        if (typeof useFallbackData === 'function' && (!Array.isArray(CASES) || CASES.length === 0)) {
+            useFallbackData();
+            try { renderCases(); renderItems(); } catch (e) {}
+        }
+        hideLoader();
+    }
+}, 15000);

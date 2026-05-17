@@ -228,48 +228,79 @@ function getEmojiForWeapon(weaponName) {
 }
 
 /**
- * Ładuje dane z API ByMykel
+ * Fetch z timeoutem - jeśli API nie odpowie w X sekund, rzuca błąd
+ */
+async function fetchWithTimeout(url, timeoutMs = 8000) {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+    try {
+        const res = await fetch(url, { signal: controller.signal });
+        clearTimeout(timeoutId);
+        return res;
+    } catch (err) {
+        clearTimeout(timeoutId);
+        if (err.name === 'AbortError') {
+            throw new Error(`Timeout po ${timeoutMs}ms: ${url}`);
+        }
+        throw err;
+    }
+}
+
+/**
+ * Używa fallback danych
+ */
+function useFallbackData() {
+    ITEMS = FALLBACK_ITEMS;
+    CASES = CASES_CONFIG.map(c => ({ ...c, pool: ITEMS }));
+}
+
+/**
+ * Ładuje dane z API ByMykel - zawsze zwraca w ograniczonym czasie
  */
 async function loadGameData() {
     try {
-        console.log('🔄 Pobieranie skinów z API...');
+        console.log('[PurpleCase] 🔄 Pobieranie skinów z API...');
+        const startTime = Date.now();
 
-        // Pobierz skiny i skrzynki równolegle
+        // Pobierz skiny i skrzynki równolegle z timeoutem
         const [skinsRes, cratesRes] = await Promise.all([
-            fetch(API.skins),
-            fetch(API.crates)
+            fetchWithTimeout(API.skins, 10000),
+            fetchWithTimeout(API.crates, 10000)
         ]);
 
-        if (!skinsRes.ok || !cratesRes.ok) throw new Error('API niedostępne');
+        console.log(`[PurpleCase] HTTP: skins=${skinsRes.status}, crates=${cratesRes.status} (${Date.now() - startTime}ms)`);
+
+        if (!skinsRes.ok || !cratesRes.ok) {
+            throw new Error(`HTTP error: skins=${skinsRes.status}, crates=${cratesRes.status}`);
+        }
 
         const allSkins = await skinsRes.json();
         const allCrates = await cratesRes.json();
 
-        console.log(`✅ Załadowano ${allSkins.length} skinów i ${allCrates.length} skrzynek`);
+        console.log(`[PurpleCase] ✅ Pobrano ${allSkins.length} skinów i ${allCrates.length} skrzynek (${Date.now() - startTime}ms)`);
 
-        // Filtruj tylko skiny z obrazkami
-        const skinsWithImages = allSkins.filter(s => s.image);
+        // Filtruj tylko skiny z obrazkami (oszczędność RAM)
+        const skinsWithImages = allSkins.filter(s => s && s.image);
 
-        // ITEMS - wybierz 16 popularnych skinów (ładnie wymieszanych po rzadkościach)
+        // ITEMS - 12 popularnych skinów
         const popularSkins = pickPopularItems(skinsWithImages);
         ITEMS = popularSkins.map(mapApiSkin);
 
-        // CASES - dopasuj nasze konfiguracje do prawdziwych skrzynek
+        // CASES - dopasuj konfiguracje do prawdziwych skrzynek
         CASES = CASES_CONFIG.map(config => {
             const apiCrate = allCrates.find(c => c.name === config.apiName);
             return {
                 ...config,
-                image: apiCrate?.image || null, // obrazek skrzynki ze Steam CDN
-                // Ustal pulę przedmiotów dla tej skrzynki
+                image: apiCrate?.image || null,
                 pool: getPoolForCrate(apiCrate, allSkins) || ITEMS
             };
         });
 
+        console.log(`[PurpleCase] ✨ Gotowe (${Date.now() - startTime}ms)`);
         return true;
     } catch (err) {
-        console.warn('⚠️ Nie udało się pobrać danych z API, używam fallback:', err.message);
-        ITEMS = FALLBACK_ITEMS;
-        CASES = CASES_CONFIG.map(c => ({ ...c, pool: ITEMS }));
+        console.warn('[PurpleCase] ⚠️ Nie udało się pobrać danych z API, używam fallback:', err.message);
+        useFallbackData();
         return false;
     }
 }
