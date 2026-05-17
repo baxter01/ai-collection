@@ -19,7 +19,6 @@ const CASES_CONFIG = [
     {
         id: 'dragon_hoard',
         displayName: 'Dragon Hoard',
-        // Nazwa skrzynki w API ByMykel (musi pasować dokładnie)
         gameNames: ['Operation Bravo Case', 'eSports 2014 Summer Case'],
         emoji: '🐉',
         gradient: 'linear-gradient(135deg, #ef4444 0%, #f97316 100%)',
@@ -132,6 +131,82 @@ const CASES_CONFIG = [
         gradient: 'linear-gradient(135deg, #6366f1 0%, #ec4899 100%)',
         price: 59.99,
         categories: ['popular']
+    },
+    {
+        id: 'thunder_strike',
+        displayName: 'Thunder Strike',
+        gameNames: ['Revolution Case', 'Recoil Case'],
+        emoji: '⚡',
+        gradient: 'linear-gradient(135deg, #facc15 0%, #f97316 100%)',
+        price: 69.99,
+        badge: 'HOT',
+        categories: ['popular', 'new']
+    },
+    {
+        id: 'midnight_rose',
+        displayName: 'Midnight Rose',
+        gameNames: ['Fracture Case', 'Dreams & Nightmares Case'],
+        emoji: '🌹',
+        gradient: 'linear-gradient(135deg, #be123c 0%, #831843 100%)',
+        price: 89.99,
+        badge: 'RARE',
+        categories: ['premium']
+    },
+    {
+        id: 'mystic_forest',
+        displayName: 'Mystic Forest',
+        gameNames: ['Gamma Case', 'Gamma 2 Case'],
+        emoji: '🌿',
+        gradient: 'linear-gradient(135deg, #10b981 0%, #06b6d4 100%)',
+        price: 24.99,
+        categories: ['cheap', 'popular']
+    },
+    {
+        id: 'arcade_madness',
+        displayName: 'Arcade Madness',
+        gameNames: ['Spectrum Case', 'Horizon Case'],
+        emoji: '🎮',
+        gradient: 'linear-gradient(135deg, #ec4899 0%, #06b6d4 100%)',
+        price: 19.99,
+        badge: 'NEW',
+        categories: ['cheap', 'new']
+    },
+    {
+        id: 'samurai_legacy',
+        displayName: 'Samurai Legacy',
+        gameNames: ['Shattered Web Case', 'Operation Hydra Case'],
+        emoji: '⚔️',
+        gradient: 'linear-gradient(135deg, #dc2626 0%, #18102e 100%)',
+        price: 109.99,
+        categories: ['knives', 'premium']
+    },
+    {
+        id: 'crystal_palace',
+        displayName: 'Crystal Palace',
+        gameNames: ['Chroma 3 Case', 'Gamma Case'],
+        emoji: '💎',
+        gradient: 'linear-gradient(135deg, #06b6d4 0%, #c084fc 100%)',
+        price: 159.99,
+        badge: 'VIP',
+        categories: ['premium']
+    },
+    {
+        id: 'ghost_rider',
+        displayName: 'Ghost Rider',
+        gameNames: ['Spectrum 2 Case', 'Shadow Case'],
+        emoji: '👻',
+        gradient: 'linear-gradient(135deg, #7c3aed 0%, #18102e 100%)',
+        price: 29.99,
+        categories: ['cheap']
+    },
+    {
+        id: 'pyro_vault',
+        displayName: 'Pyro Vault',
+        gameNames: ['Operation Phoenix Weapon Case', 'Falchion Case'],
+        emoji: '🔥',
+        gradient: 'linear-gradient(135deg, #ef4444 0%, #facc15 100%)',
+        price: 44.99,
+        categories: ['popular', 'cheap']
     }
 ];
 
@@ -378,4 +453,34 @@ function useFallbackData() {
         items: ITEMS.length,
         pool: buildFallbackItems()
     }));
+}
+
+
+
+// ==========================================================================
+// LIVE DROPS - generuje fake "ostatnie wygrane" z prawdziwych skinów
+// ==========================================================================
+const FAKE_USERNAMES = [
+    'xKillerPL', 'SnipeMaster', 'ProGamer', 'LuckyOne', 'RichBoy',
+    'HeadshotKing', 'BladeRunner', 'FireShot', 'NightOwl', 'CyberWolf',
+    'PolskiKozak', 'GhostHunter', 'PixelGod', 'NeonRider', 'ShadowFox',
+    'KingPin', 'ToxicAvenger', 'WildCard', 'IceQueen', 'DarkSoul'
+];
+
+function generateLiveDrops(count = 16) {
+    const drops = [];
+    // Bierzemy tylko rzadkie/cenne skiny (covert/classified/knife) jeśli są
+    const allItems = CASES.flatMap(c => c.pool || []);
+    const rareItems = allItems.filter(i =>
+        ['covert', 'classified', 'knife', 'restricted'].includes(i.rarity)
+    );
+    const pool = rareItems.length >= 5 ? rareItems : allItems;
+    if (pool.length === 0) return [];
+
+    for (let i = 0; i < count; i++) {
+        const item = pool[Math.floor(Math.random() * pool.length)];
+        const user = FAKE_USERNAMES[Math.floor(Math.random() * FAKE_USERNAMES.length)];
+        drops.push({ item, user });
+    }
+    return drops;
 }

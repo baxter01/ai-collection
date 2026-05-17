@@ -2034,3 +2034,849 @@ h1, h2, h3, h4 {
         grid-template-columns: 1fr;
     }
 }
+
+
+
+/* ==========================================================================
+   NOWE: Live drops - obrazki w pasku
+   ========================================================================== */
+.drop-img {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.drop-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 6px rgba(168, 85, 247, 0.4));
+}
+
+.drop-emoji {
+    font-size: 24px;
+}
+
+/* ==========================================================================
+   NOWE: Modal - opcje skrzynki (qty + jester)
+   ========================================================================== */
+.case-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+    padding: 16px;
+    background: rgba(168, 85, 247, 0.06);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+}
+
+.case-option-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.case-option-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.qty-selector {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.qty-btn {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    padding: 8px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    transition: all 0.2s;
+}
+
+.qty-btn:hover {
+    border-color: var(--border-hover);
+    color: var(--text-primary);
+}
+
+.qty-btn.active {
+    background: var(--gradient-main);
+    border-color: transparent;
+    color: white;
+    box-shadow: 0 4px 12px rgba(168, 85, 247, 0.4);
+}
+
+.jester-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 4px 14px 4px 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    color: var(--text-muted);
+    width: fit-content;
+}
+
+.jester-toggle:hover {
+    border-color: var(--border-hover);
+}
+
+.jester-knob {
+    width: 24px;
+    height: 24px;
+    background: var(--text-muted);
+    border-radius: 50%;
+    transition: all 0.3s;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.jester-toggle.active {
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.2), rgba(236, 72, 153, 0.2));
+    border-color: var(--purple);
+    color: var(--purple-light);
+}
+
+.jester-toggle.active .jester-knob {
+    background: var(--gradient-main);
+    box-shadow: 0 0 12px rgba(168, 85, 247, 0.6);
+}
+
+/* ==========================================================================
+   NOWE: Multi-rollers (do 5 jednocześnie)
+   ========================================================================== */
+.rollers-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 24px;
+}
+
+.rollers-container .roller-container {
+    height: 130px;
+    margin-bottom: 0;
+}
+
+.rollers-container .roller-item {
+    width: 130px;
+    height: 110px;
+    padding: 8px;
+}
+
+.rollers-container .roller-item-icon {
+    width: 56px;
+    height: 56px;
+    margin-bottom: 4px;
+    font-size: 32px;
+}
+
+.rollers-container .roller-item-name {
+    font-size: 10px;
+}
+
+/* Jeden roller = standardowy rozmiar */
+.rollers-container:has(.roller-container:only-child) {
+    /* fallback dla przeglądarek bez :has - styl odpowiedni dla pojedynczej rolki */
+}
+
+.rollers-container .roller-container:only-child {
+    height: 200px;
+}
+
+.rollers-container .roller-container:only-child .roller-item {
+    width: 180px;
+    height: 180px;
+    padding: 12px;
+}
+
+.rollers-container .roller-container:only-child .roller-item-icon {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 8px;
+    font-size: 60px;
+}
+
+.rollers-container .roller-container:only-child .roller-item-name {
+    font-size: 12px;
+}
+
+/* ==========================================================================
+   NOWE: Results grid (wyniki multi-open)
+   ========================================================================== */
+.results-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 16px;
+    margin-bottom: 20px;
+    max-height: 400px;
+    overflow-y: auto;
+    padding: 4px;
+}
+
+.result-card {
+    background: linear-gradient(180deg, var(--bg-card), var(--bg-secondary));
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--purple);
+    border-radius: 14px;
+    padding: 16px 12px;
+    text-align: center;
+    animation: resultPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.result-card.rarity-restricted { border-top-color: var(--rarity-restricted); }
+.result-card.rarity-classified { border-top-color: var(--rarity-classified); }
+.result-card.rarity-covert { border-top-color: var(--rarity-covert); box-shadow: 0 0 20px rgba(235, 75, 75, 0.3); }
+.result-card.rarity-knife { border-top-color: var(--rarity-knife); box-shadow: 0 0 25px rgba(228, 174, 57, 0.4); }
+
+.result-card-img {
+    width: 90px;
+    height: 90px;
+    margin: 0 auto 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 48px;
+}
+
+.result-card-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 4px 10px rgba(168, 85, 247, 0.4));
+}
+
+.result-card-name {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    background: var(--gradient-main);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 4px;
+    line-height: 1.2;
+    min-height: 28px;
+}
+
+.result-card-rarity {
+    font-size: 10px;
+    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    margin-bottom: 6px;
+}
+
+.result-card-price {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--text-primary);
+}
+
+.result-summary {
+    background: rgba(168, 85, 247, 0.1);
+    border: 1px solid var(--border-hover);
+    border-radius: 12px;
+    padding: 14px 20px;
+    margin-bottom: 20px;
+}
+
+.result-summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 16px;
+}
+
+.result-summary-row strong {
+    background: var(--gradient-main);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-size: 20px;
+}
+
+/* ==========================================================================
+   NOWE: BITWY (BATTLES)
+   ========================================================================== */
+.battles-section {
+    padding: 80px 0;
+    border-top: 1px solid var(--border);
+}
+
+.battles-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.battles-filter {
+    display: flex;
+    gap: 8px;
+}
+
+.battle-filter-btn {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    padding: 10px 18px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.2s;
+}
+
+.battle-filter-btn:hover {
+    border-color: var(--border-hover);
+    color: var(--text-primary);
+}
+
+.battle-filter-btn.active {
+    background: var(--gradient-main);
+    border-color: transparent;
+    color: white;
+}
+
+.battles-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+    gap: 20px;
+}
+
+.battles-empty {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-muted);
+    background: var(--bg-card);
+    border: 1px dashed var(--border-hover);
+    border-radius: 16px;
+}
+
+.battles-empty small {
+    display: block;
+    margin-top: 8px;
+    font-size: 13px;
+}
+
+.battle-card {
+    background: linear-gradient(180deg, var(--bg-card), var(--bg-secondary));
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+}
+
+.battle-card.status-running {
+    border-color: var(--purple);
+    box-shadow: 0 0 20px rgba(168, 85, 247, 0.2);
+}
+
+.battle-card.status-finished {
+    opacity: 0.85;
+}
+
+.battle-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--border-hover);
+    box-shadow: 0 10px 30px rgba(168, 85, 247, 0.2);
+}
+
+.battle-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+}
+
+.battle-mode-badge {
+    display: inline-block;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    padding: 5px 10px;
+    border-radius: 8px;
+}
+
+.battle-mode-badge.normal {
+    background: rgba(168, 85, 247, 0.15);
+    color: var(--purple-light);
+    border: 1px solid var(--border-hover);
+}
+
+.battle-mode-badge.underdog {
+    background: rgba(236, 72, 153, 0.15);
+    color: var(--pink-light);
+    border: 1px solid rgba(236, 72, 153, 0.4);
+}
+
+.battle-card-cost {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    background: var(--gradient-main);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.battle-card-cases {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+}
+
+.battle-cases-label {
+    color: var(--text-muted);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.battle-mini-case {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 18px;
+}
+
+.battle-card-slots {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+}
+
+.battle-slot {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 8px;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    min-width: 70px;
+    flex: 1;
+}
+
+.battle-slot.me {
+    border-color: var(--purple);
+    background: linear-gradient(180deg, rgba(168, 85, 247, 0.15), var(--bg-tertiary));
+}
+
+.battle-slot.bot {
+    border-color: rgba(168, 85, 247, 0.3);
+    border-style: dashed;
+}
+
+.battle-slot.empty {
+    opacity: 0.5;
+}
+
+.battle-slot-avatar {
+    font-size: 24px;
+}
+
+.battle-slot-name {
+    font-size: 11px;
+    color: var(--text-secondary);
+    font-weight: 600;
+    text-align: center;
+    max-width: 80px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.battle-card-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.battle-card-actions .battle-action {
+    flex: 1;
+    min-width: 120px;
+    padding: 10px 14px;
+    font-size: 13px;
+    border-radius: 10px;
+}
+
+.battle-winner {
+    margin-top: 12px;
+    padding: 10px 14px;
+    background: linear-gradient(135deg, rgba(228, 174, 57, 0.15), rgba(168, 85, 247, 0.1));
+    border: 1px solid rgba(228, 174, 57, 0.4);
+    border-radius: 10px;
+    font-size: 13px;
+    color: var(--text-primary);
+    text-align: center;
+}
+
+/* ==========================================================================
+   Modal: Battle Creator
+   ========================================================================== */
+.modal-battle-creator {
+    max-width: 800px;
+}
+
+.bc-section {
+    margin-bottom: 24px;
+}
+
+.bc-section-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-secondary);
+    margin-bottom: 10px;
+}
+
+.bc-mode-tabs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.bc-mode-tab {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    padding: 16px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    transition: all 0.2s;
+    text-align: left;
+}
+
+.bc-mode-tab small {
+    display: block;
+    margin-top: 4px;
+    font-size: 11px;
+    color: var(--text-muted);
+    font-weight: 400;
+}
+
+.bc-mode-tab:hover {
+    border-color: var(--border-hover);
+    color: var(--text-primary);
+}
+
+.bc-mode-tab.active {
+    background: linear-gradient(180deg, rgba(168, 85, 247, 0.15), var(--bg-card));
+    border-color: var(--purple);
+    color: white;
+}
+
+.bc-mode-tab.active small {
+    color: var(--purple-light);
+}
+
+.bc-selected {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    min-height: 60px;
+    padding: 12px;
+    background: var(--bg-tertiary);
+    border: 1px dashed var(--border-hover);
+    border-radius: 10px;
+}
+
+.bc-empty {
+    color: var(--text-muted);
+    font-size: 13px;
+    width: 100%;
+    text-align: center;
+    align-self: center;
+}
+
+.bc-selected-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-hover);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.bc-selected-item:hover {
+    background: rgba(239, 68, 68, 0.15);
+    border-color: rgba(239, 68, 68, 0.4);
+}
+
+.bc-selected-price {
+    font-size: 11px;
+    color: var(--text-secondary);
+    font-weight: 700;
+}
+
+.bc-cases-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 10px;
+    max-height: 320px;
+    overflow-y: auto;
+    padding: 4px;
+}
+
+.bc-cases-grid::-webkit-scrollbar {
+    width: 6px;
+}
+.bc-cases-grid::-webkit-scrollbar-track {
+    background: var(--bg-tertiary);
+    border-radius: 3px;
+}
+.bc-cases-grid::-webkit-scrollbar-thumb {
+    background: var(--purple);
+    border-radius: 3px;
+}
+
+.bc-case-card {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 8px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.bc-case-card:hover {
+    border-color: var(--purple);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(168, 85, 247, 0.2);
+}
+
+.bc-case-emoji {
+    font-size: 32px;
+    margin-bottom: 4px;
+}
+
+.bc-case-name {
+    font-size: 11px;
+    font-weight: 700;
+    background: var(--gradient-main);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 4px;
+    line-height: 1.2;
+    min-height: 26px;
+}
+
+.bc-case-price {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+/* ==========================================================================
+   Modal: Battle Viewer
+   ========================================================================== */
+.modal-battle-viewer {
+    max-width: 1000px;
+}
+
+.bv-header {
+    margin-bottom: 20px;
+}
+
+.bv-board {
+    display: grid;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.bv-player {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px;
+    display: grid;
+    grid-template-columns: 180px 1fr 140px;
+    gap: 16px;
+    align-items: center;
+}
+
+.bv-player.me {
+    border-color: var(--purple);
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.1), var(--bg-tertiary));
+}
+
+.bv-player-name {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    background: var(--gradient-main);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.bv-player-items {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    padding: 4px 0;
+    min-height: 70px;
+    align-items: center;
+}
+
+.bv-player-items::-webkit-scrollbar {
+    height: 4px;
+}
+.bv-player-items::-webkit-scrollbar-thumb {
+    background: var(--purple);
+    border-radius: 2px;
+}
+
+.bv-item {
+    flex-shrink: 0;
+    width: 60px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-top: 2px solid var(--purple);
+    border-radius: 8px;
+    padding: 4px;
+    text-align: center;
+    position: relative;
+}
+
+.bv-item.rarity-restricted { border-top-color: var(--rarity-restricted); }
+.bv-item.rarity-classified { border-top-color: var(--rarity-classified); }
+.bv-item.rarity-covert { border-top-color: var(--rarity-covert); }
+.bv-item.rarity-knife { border-top-color: var(--rarity-knife); box-shadow: 0 0 8px rgba(228, 174, 57, 0.4); }
+
+.bv-item-new {
+    animation: itemPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes itemPop {
+    0% { transform: scale(0) translateY(-20px); opacity: 0; }
+    100% { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+.bv-item-img {
+    width: 36px;
+    height: 36px;
+    margin: 0 auto 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+}
+
+.bv-item-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.bv-item-price {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 9px;
+    font-weight: 700;
+    color: var(--text-secondary);
+}
+
+.bv-player-total {
+    text-align: right;
+    font-family: 'Orbitron', sans-serif;
+    display: flex;
+    flex-direction: column;
+}
+
+.bv-player-total span {
+    font-size: 10px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 4px;
+}
+
+.bv-player-total strong {
+    font-size: 18px;
+    font-weight: 900;
+    background: var(--gradient-main);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.bv-status {
+    text-align: center;
+    padding: 12px;
+    background: rgba(168, 85, 247, 0.08);
+    border-radius: 10px;
+    margin-bottom: 16px;
+    color: var(--text-secondary);
+    font-size: 14px;
+    font-weight: 600;
+}
+
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
+@media (max-width: 768px) {
+    .case-options {
+        grid-template-columns: 1fr;
+    }
+
+    .bv-player {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .bv-player-total {
+        text-align: center;
+    }
+
+    .battles-list {
+        grid-template-columns: 1fr;
+    }
+}

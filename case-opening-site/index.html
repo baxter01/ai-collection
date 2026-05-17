@@ -48,6 +48,7 @@
             <ul class="nav-links">
                 <li><a href="#cases" class="active">Skrzynki</a></li>
                 <li><a href="#upgrade">Upgrade</a></li>
+                <li><a href="#battles">Bitwy</a></li>
                 <li><a href="#featured">Skiny</a></li>
                 <li><a href="#how">Jak grać</a></li>
             </ul>
@@ -68,69 +69,14 @@
         </div>
     </nav>
 
-    <!-- Live Drops -->
+    <!-- Live Drops - wypełniane dynamicznie przez JS po załadowaniu skinów -->
     <div class="live-drops">
         <div class="live-label">
             <span class="live-dot"></span>
             <span>NA ŻYWO</span>
         </div>
-        <div class="drops-track">
-            <div class="drop-card rarity-covert">
-                <div class="drop-img">🔪</div>
-                <div class="drop-info">
-                    <div class="drop-name">Karambit | Doppler</div>
-                    <div class="drop-user">@xKillerPL</div>
-                </div>
-            </div>
-            <div class="drop-card rarity-classified">
-                <div class="drop-img">🎯</div>
-                <div class="drop-info">
-                    <div class="drop-name">AWP | Asiimov</div>
-                    <div class="drop-user">@SnipeMaster</div>
-                </div>
-            </div>
-            <div class="drop-card rarity-restricted">
-                <div class="drop-img">🔫</div>
-                <div class="drop-info">
-                    <div class="drop-name">AK-47 | Redline</div>
-                    <div class="drop-user">@ProGamer</div>
-                </div>
-            </div>
-            <div class="drop-card rarity-covert">
-                <div class="drop-img">🔪</div>
-                <div class="drop-info">
-                    <div class="drop-name">Butterfly | Fade</div>
-                    <div class="drop-user">@LuckyOne</div>
-                </div>
-            </div>
-            <div class="drop-card rarity-classified">
-                <div class="drop-img">🔫</div>
-                <div class="drop-info">
-                    <div class="drop-name">M4A4 | Howl</div>
-                    <div class="drop-user">@RichBoy</div>
-                </div>
-            </div>
-            <div class="drop-card rarity-restricted">
-                <div class="drop-img">🔫</div>
-                <div class="drop-info">
-                    <div class="drop-name">USP-S | Kill Confirmed</div>
-                    <div class="drop-user">@HeadshotKing</div>
-                </div>
-            </div>
-            <div class="drop-card rarity-covert">
-                <div class="drop-img">🔪</div>
-                <div class="drop-info">
-                    <div class="drop-name">Bayonet | Tiger Tooth</div>
-                    <div class="drop-user">@BladeRunner</div>
-                </div>
-            </div>
-            <div class="drop-card rarity-classified">
-                <div class="drop-img">🔫</div>
-                <div class="drop-info">
-                    <div class="drop-name">Desert Eagle | Blaze</div>
-                    <div class="drop-user">@FireShot</div>
-                </div>
-            </div>
+        <div class="drops-track" id="liveDropsTrack">
+            <!-- generowane w JS -->
         </div>
     </div>
 
@@ -233,6 +179,33 @@
                 <p class="section-subtitle">Wybierz skrzynkę i wygraj wyjątkowe skiny</p>
             </div>
             <div class="cases-grid" id="casesGrid"></div>
+        </div>
+    </section>
+
+    <!-- BATTLES Section -->
+    <section class="battles-section" id="battles">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">
+                    Skrzynkowe <span class="gradient-text">Bitwy</span>
+                </h2>
+                <p class="section-subtitle">Otwieraj skrzynki przeciwko innym graczom — wygrywa kto zdobędzie najwięcej (lub najmniej w trybie Underdog)</p>
+            </div>
+
+            <div class="battles-toolbar">
+                <button class="btn-primary" id="createBattleBtn">
+                    <span>⚔️ Utwórz bitwę</span>
+                </button>
+                <div class="battles-filter">
+                    <button class="battle-filter-btn active" data-bf="all">Wszystkie</button>
+                    <button class="battle-filter-btn" data-bf="waiting">Oczekujące</button>
+                    <button class="battle-filter-btn" data-bf="finished">Zakończone</button>
+                </div>
+            </div>
+
+            <div class="battles-list" id="battlesList">
+                <!-- generowane w JS -->
+            </div>
         </div>
     </section>
 
