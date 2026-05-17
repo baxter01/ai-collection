@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PurpleCase - Otwieraj Skrzynki ze Skinami</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="bg-effects">
+        <div class="bg-orb bg-orb-1"></div>
+        <div class="bg-orb bg-orb-2"></div>
+        <div class="bg-orb bg-orb-3"></div>
+        <div class="bg-grid"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <div class="logo-icon">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="url(#logoGrad)" stroke-width="2" stroke-linejoin="round"/>
+                        <path d="M2 17L12 22L22 17" stroke="url(#logoGrad)" stroke-width="2" stroke-linejoin="round"/>
+                        <path d="M2 12L12 17L22 12" stroke="url(#logoGrad)" stroke-width="2" stroke-linejoin="round"/>
+                        <defs>
+                            <linearGradient id="logoGrad" x1="0" y1="0" x2="24" y2="24">
+                                <stop offset="0%" stop-color="#a855f7"/>
+                                <stop offset="100%" stop-color="#ec4899"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                </div>
+                <span class="logo-text">PurpleCase</span>
+            </a>
+
+            <ul class="nav-links">
+                <li><a href="#cases" class="active">Skrzynki</a></li>
+                <li><a href="#upgrade">Upgrade</a></li>
+                <li><a href="#battles">Bitwy</a></li>
+                <li><a href="#contracts">Kontrakty</a></li>
+                <li><a href="#daily">Daily</a></li>
+            </ul>
+
+            <div class="nav-actions">
+                <div class="balance">
+                    <span class="balance-icon">💎</span>
+                    <span class="balance-amount">2,450.00</span>
+                </div>
+                <button class="btn-deposit">
+                    <span>+ Doładuj</span>
+                </button>
+                <div class="user-avatar">
+                    <img src="https://i.pravatar.cc/40?img=12" alt="user">
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Live Drops Strip -->
+    <div class="live-drops">
+        <div class="live-label">
+            <span class="live-dot"></span>
+            <span>NA ŻYWO</span>
+        </div>
+        <div class="drops-track">
+            <div class="drop-card rarity-covert">
+                <div class="drop-img">🔪</div>
+                <div class="drop-info">
+                    <div class="drop-name">Karambit | Doppler</div>
+                    <div class="drop-user">@xKillerPL</div>
+                </div>
+            </div>
+            <div class="drop-card rarity-classified">
+                <div class="drop-img">🔫</div>
+                <div class="drop-info">
+                    <div class="drop-name">AWP | Asiimov</div>
+                    <div class="drop-user">@SnipeMaster</div>
+                </div>
+            </div>
+            <div class="drop-card rarity-restricted">
+                <div class="drop-img">🔫</div>
+                <div class="drop-info">
+                    <div class="drop-name">AK-47 | Redline</div>
+                    <div class="drop-user">@ProGamer</div>
+                </div>
+            </div>
+            <div class="drop-card rarity-covert">
+                <div class="drop-img">🗡️</div>
+                <div class="drop-info">
+                    <div class="drop-name">Butterfly | Fade</div>
+                    <div class="drop-user">@LuckyOne</div>
+                </div>
+            </div>
+            <div class="drop-card rarity-classified">
+                <div class="drop-img">🔫</div>
+                <div class="drop-info">
+                    <div class="drop-name">M4A4 | Howl</div>
+                    <div class="drop-user">@RichBoy</div>
+                </div>
+            </div>
+            <div class="drop-card rarity-restricted">
+                <div class="drop-img">🔫</div>
+                <div class="drop-info">
+                    <div class="drop-name">USP-S | Kill Confirmed</div>
+                    <div class="drop-user">@HeadshotKing</div>
+                </div>
+            </div>
+            <div class="drop-card rarity-covert">
+                <div class="drop-img">🔪</div>
+                <div class="drop-info">
+                    <div class="drop-name">Bayonet | Tiger Tooth</div>
+                    <div class="drop-user">@BladeRunner</div>
+                </div>
+            </div>
+            <div class="drop-card rarity-classified">
+                <div class="drop-img">🔫</div>
+                <div class="drop-info">
+                    <div class="drop-name">Desert Eagle | Blaze</div>
+                    <div class="drop-user">@FireShot</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-badge">
+                <span class="hero-badge-dot"></span>
+                <span>Najlepsza platforma do otwierania skrzynek 2026</span>
+            </div>
+            <h1 class="hero-title">
+                Otwieraj <span class="gradient-text">Skrzynki</span><br>
+                Wygrywaj <span class="gradient-text-pink">Najlepsze Skiny</span>
+            </h1>
+            <p class="hero-subtitle">
+                Tysiące skrzynek, miliony skinów. Dołącz do społeczności, otwieraj skrzynki i zdobywaj rzadkie przedmioty z całego świata CS:GO.
+            </p>
+            <div class="hero-buttons">
+                <button class="btn-primary">
+                    <span>Otwórz Pierwszą Skrzynkę</span>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                        <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </button>
+                <button class="btn-secondary">Jak to działa?</button>
+            </div>
+            <div class="hero-stats">
+                <div class="stat">
+                    <div class="stat-value gradient-text">2.5M+</div>
+                    <div class="stat-label">Otwartych skrzynek</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value gradient-text">150K+</div>
+                    <div class="stat-label">Aktywnych graczy</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value gradient-text">99.9%</div>
+                    <div class="stat-label">Wypłacalność</div>
+                </div>
+            </div>
+        </div>
+        <div class="hero-visual">
+            <div class="hero-case">
+                <div class="hero-case-glow"></div>
+                <div class="hero-case-box">
+                    <div class="case-shine"></div>
+                    <div class="case-icon">📦</div>
+                </div>
+                <div class="floating-item item-1">💎</div>
+                <div class="floating-item item-2">🔪</div>
+                <div class="floating-item item-3">🔫</div>
+                <div class="floating-item item-4">⭐</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Categories -->
+    <section class="categories">
+        <div class="container">
+            <div class="category-tabs">
+                <button class="cat-tab active">
+                    <span class="cat-icon">🔥</span>
+                    <span>Popularne</span>
+                </button>
+                <button class="cat-tab">
+                    <span class="cat-icon">⭐</span>
+                    <span>Premium</span>
+                </button>
+                <button class="cat-tab">
+                    <span class="cat-icon">🆕</span>
+                    <span>Nowe</span>
+                </button>
+                <button class="cat-tab">
+                    <span class="cat-icon">💰</span>
+                    <span>Tanie</span>
+                </button>
+                <button class="cat-tab">
+                    <span class="cat-icon">🔪</span>
+                    <span>Noże</span>
+                </button>
+                <button class="cat-tab">
+                    <span class="cat-icon">🧤</span>
+                    <span>Rękawiczki</span>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Cases Grid -->
+    <section class="cases-section" id="cases">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <span class="gradient-text">Skrzynki</span> Do Otwarcia
+                </h2>
+                <p class="section-subtitle">Wybierz skrzynkę i wygraj wyjątkowe skiny</p>
+            </div>
+
+            <div class="cases-grid" id="casesGrid">
+                <!-- Cases will be injected here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Items -->
+    <section class="featured-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <span class="gradient-text-pink">Najpopularniejsze</span> Przedmioty
+                </h2>
+                <p class="section-subtitle">Najczęściej wygrywane skiny w tym tygodniu</p>
+            </div>
+
+            <div class="featured-grid" id="featuredGrid">
+                <!-- Items will be injected here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- How it works -->
+    <section class="how-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">
+                    Jak to <span class="gradient-text">Działa</span>?
+                </h2>
+            </div>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number gradient-text">01</div>
+                    <div class="step-icon">💳</div>
+                    <h3>Doładuj konto</h3>
+                    <p>Wybierz wygodną metodę płatności i doładuj swoje konto w kilka sekund.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number gradient-text">02</div>
+                    <div class="step-icon">📦</div>
+                    <h3>Wybierz skrzynkę</h3>
+                    <p>Setki skrzynek w różnych cenach. Każda zawiera unikatowe skiny.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number gradient-text">03</div>
+                    <div class="step-icon">🎁</div>
+                    <h3>Otwórz i wygraj</h3>
+                    <p>Otwórz skrzynkę i odbierz swój skin lub wymień na środki.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number gradient-text">04</div>
+                    <div class="step-icon">💸</div>
+                    <h3>Wypłać lub wymień</h3>
+                    <p>Skiny przesyłamy bezpośrednio na Twój ekwipunek Steam.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <div class="logo">
+                        <div class="logo-icon">
+                            <svg viewBox="0 0 24 24" fill="none">
+                                <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="url(#footerGrad)" stroke-width="2" stroke-linejoin="round"/>
+                                <path d="M2 17L12 22L22 17" stroke="url(#footerGrad)" stroke-width="2" stroke-linejoin="round"/>
+                                <path d="M2 12L12 17L22 12" stroke="url(#footerGrad)" stroke-width="2" stroke-linejoin="round"/>
+                                <defs>
+                                    <linearGradient id="footerGrad" x1="0" y1="0" x2="24" y2="24">
+                                        <stop offset="0%" stop-color="#a855f7"/>
+                                        <stop offset="100%" stop-color="#ec4899"/>
+                                    </linearGradient>
+                                </defs>
+                            </svg>
+                        </div>
+                        <span class="logo-text">PurpleCase</span>
+                    </div>
+                    <p>Najlepsza platforma do otwierania skrzynek ze skinami CS:GO. Bezpiecznie, szybko i uczciwie.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Platforma</h4>
+                    <ul>
+                        <li><a href="#">Skrzynki</a></li>
+                        <li><a href="#">Upgrade</a></li>
+                        <li><a href="#">Bitwy</a></li>
+                        <li><a href="#">Kontrakty</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Pomoc</h4>
+                    <ul>
+                        <li><a href="#">FAQ</a></li>
+                        <li><a href="#">Wsparcie</a></li>
+                        <li><a href="#">Provably Fair</a></li>
+                        <li><a href="#">Kontakt</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Prawne</h4>
+                    <ul>
+                        <li><a href="#">Regulamin</a></li>
+                        <li><a href="#">Polityka prywatności</a></li>
+                        <li><a href="#">Cookies</a></li>
+                        <li><a href="#">AML</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2026 PurpleCase. Wszystkie prawa zastrzeżone.</p>
+                <div class="socials">
+                    <a href="#" aria-label="Discord">💬</a>
+                    <a href="#" aria-label="Twitter">🐦</a>
+                    <a href="#" aria-label="YouTube">📺</a>
+                    <a href="#" aria-label="Instagram">📷</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/data.js"></script>
+    <script src="js/script.js"></script>
+</body>
+</html>
